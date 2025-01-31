@@ -1,17 +1,16 @@
-const elementHeight = 25;
-var uiUsed = false;
 
 class EnumButton{
-    constructor(name, id, width = 150){
+    constructor(name, id, height, width = 150){
         this.name = name;
-        this.width = width;
         this.id = id;
+        this.height = height;
+        this.width = width;
         this.over = false;
         this.selected = false;
     }
 
     IsOver(e){
-        return e.clientX > 0 && e.clientX < this.width && e.clientY > this.y && e.clientY < this.y+elementHeight;
+        return e.clientX > 0 && e.clientX < this.width && e.clientY > this.y && e.clientY < this.y+this.height;
     }
 
     MouseDown(e){
@@ -39,8 +38,8 @@ class EnumButton{
         ctx.strokeStyle = 'black';
         ctx.fillStyle = this.selected?'red':this.over?'magenta':'white';
         
-        ctx.fillRect(0,y,this.width,elementHeight);
-        ctx.strokeRect(0,y,this.width,elementHeight);
+        ctx.fillRect(0,y,this.width,this.height);
+        ctx.strokeRect(0,y,this.width,this.height);
         ctx.fillStyle = 'black';
         ctx.font = '18px Arial';
         ctx.fillText(this.name, 10, y+18);
@@ -49,24 +48,26 @@ class EnumButton{
 
 class UI{
     constructor(){
+        const height = 25;
         this.elements = [
-            new EnumButton('Ground', 0), 
-            new EnumButton('Empty', 0), 
-            new EnumButton('Player', 0), 
-            new EnumButton('Snake', 0), 
-            new EnumButton('Play', 1),
-            new EnumButton('Edit', 1)
+            new EnumButton('Ground', 0, height), 
+            new EnumButton('Empty', 0, height), 
+            new EnumButton('Player', 0, height), 
+            new EnumButton('Snake', 0, height), 
+            new EnumButton('Play', 1, height),
+            new EnumButton('Edit', 1, height)
         ];
+        this.uiUsed = false;
     }
 
     CallElementReversed(name, e){
-        uiUsed = false;
+        this.uiUsed = false;
         for(var i=this.elements.length-1;i>=0;i--){
             var element = this.elements[i];
             if(element){
                 element[name](e);
             }
-            if(uiUsed){
+            if(this.uiUsed){
                 return;
             }
         }
@@ -88,11 +89,12 @@ class UI{
         var y = 0;
         for(var e of this.elements){
             e.Draw(y);
-            y += elementHeight;
+            y += e.height;
         }
     }
-}
 
-layers.push(new UI());
-CallEvent('EnumButton', {name:'Ground', id:0});
-CallEvent('EnumButton', {name:'Edit', id:1});
+    Awake(){
+        CallEvent('EnumButton', {name:'Ground', id:0});
+        CallEvent('EnumButton', {name:'Edit', id:1});
+    }
+}

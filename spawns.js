@@ -2,7 +2,6 @@
 class Spawns{
     constructor(){
         this.spawns = [];
-
     }
 
     Play(){
@@ -45,7 +44,7 @@ class Spawns{
     }
 
     MouseDown(e){
-        if(this.selected && !play){
+        if(this.selected && !GetLayer('Play').play){
             this.spawns.push({type:this.type, x:e.clientX+camx, y:e.clientY+camy});
             used = true;
         }
@@ -57,7 +56,7 @@ class Spawns{
     }
 
     Draw(){
-        if(!play){
+        if(!GetLayer('Play').play){
             for(var spawn of this.spawns){
                 ctx.beginPath();
                 ctx.arc(spawn.x - camx, spawn.y - camy, 7.5, 0, Math.PI*2);
@@ -67,5 +66,3 @@ class Spawns{
         }
     }
 }
-
-layers.push(new Spawns());

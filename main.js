@@ -67,9 +67,28 @@ function Draw(){
     requestAnimationFrame(Draw);
 }
 
+function GetLayer(name){
+    for(var l of layers){
+        if(l.constructor.name == name){
+            return l;
+        }
+    }
+}
+
+function InitLayers(newLayers){
+    layers = newLayers;
+    for(var l of layers){
+        if(l.Awake){
+            l.Awake();
+        }
+    }
+}
+
 addEventListener('keydown', KeyDown);
 addEventListener('keyup', KeyUp);
 addEventListener('mousedown', MouseDown);
 addEventListener('mousemove', MouseMove);
 addEventListener('mouseup', MouseUp);
 Draw();
+
+InitLayers([new Play(), new Editor(), new Tilemap(50), new Spawns(), new UI()]);

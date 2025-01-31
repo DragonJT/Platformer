@@ -1,5 +1,3 @@
-const gravity = 0.3;
-var play = false;
 
 function rectsColliding(rect1, rect2) {
     return (
@@ -11,10 +9,11 @@ function rectsColliding(rect1, rect2) {
 }
 
 class Play{
-
     constructor(){
         this.objects = [];
         this.snakeTime = 0;
+        this.gravity = 0.3;
+        this.play = false;
     }
 
     static GetObjRect(obj){
@@ -36,11 +35,11 @@ class Play{
     EnumButton(data){
         if(data.id == 1){
             if(data.name == 'Play'){
-                play = true;
+                this.play = true;
                 CallEvent('Play');
             }
             else if(data.name == 'Edit'){
-                play = false;
+                this.play = false;
                 CallEvent('Edit');
             }
         }
@@ -66,7 +65,7 @@ class Play{
         if(obj.type == 'Player'){
             camx = obj.x - ctx.canvas.width/2;
             camy = obj.y - ctx.canvas.height/2;
-            obj.velocityY += gravity;
+            obj.velocityY += this.gravity;
             obj.velocityX = 0;
             if(keys.ArrowLeft){
                 obj.velocityX -= obj.speed;
@@ -100,5 +99,3 @@ class Play{
         this.objects = this.objects.filter(o=>!o.dead);
     }
 }
-
-layers.push(new Play());

@@ -1,22 +1,23 @@
-const editorSpeed = 10;
 
 class Editor{
+    constructor(){
+        this.editorSpeed = 10;
+    }
+
     Draw(){
-        if(!play){
+        if(!GetLayer('Play').play){
             if(keys.ArrowLeft){
-                camx -= editorSpeed;
+                camx -= this.editorSpeed;
             }
             if(keys.ArrowRight){
-                camx += editorSpeed;
+                camx += this.editorSpeed;
             }
             if(keys.ArrowUp){
-                camy -= editorSpeed;
+                camy -= this.editorSpeed;
             }
             if(keys.ArrowDown){
-                camy += editorSpeed;
+                camy += this.editorSpeed;
             }
         }
     }
 }
-
-layers.push(new Editor());

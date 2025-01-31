@@ -67,7 +67,7 @@ class Tilemap{
     }
 
     MouseDown(e){
-        if(e.button == 0 && this.selected && !play){
+        if(e.button == 0 && this.selected && !GetLayer('Play').play){
             this.dragging = true;
             this.SetTileWorldCoords(e.clientX+camx, e.clientY+camy, this.type);
         }
@@ -99,5 +99,3 @@ class Tilemap{
         }
     }
 }
-
-layers.push(new Tilemap(50));
