@@ -7,9 +7,11 @@ function Play(){
     var objects = undefined;
     var snakeTime = 0;
     const gravity = 0.3;
+    var playerTexture;
 
     function Start(){
         snakeTime = 0;
+        playerTexture = paint.GetPlayerTexture();
         objects = spawns.GetObjects();
     }
 
@@ -56,7 +58,7 @@ function Play(){
             obj.x += obj.velocityX;
             TryMove(obj);
             tilemap.TryMoveX(obj);
-            gfx.DrawRect(obj.x - obj.rx - camx, obj.y - obj.ry - camy, obj.rx*2, obj.ry*2, [1,0,0,1]);
+            gfx.DrawTexture(obj.x - obj.rx - camx, obj.y - obj.ry - camy, obj.rx*2, obj.ry*2, playerTexture, [1,1,1,1]);
         }
         else if(obj.type == 'Snake'){
             obj.height = (Math.sin(snakeTime + (obj.x + obj.y) * 0.025) + 1) / 2 * obj.maxHeight;
