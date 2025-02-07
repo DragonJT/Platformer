@@ -1,13 +1,19 @@
 
-class Spawns{
-    constructor(){
-        this.spawns = [];
+function Spawns(){
+    var spawnType = 'Player';
+    var spawnTypes = ['Player', 'Snake'];
+    var spawns = [];
+
+    function GetColor(type){
+        if(type == 'Player') return 'red';
+        if(type == 'Snake') return 'yellow';
     }
 
-    Play(){
-        for(var spawn of this.spawns){
+    function GetObjects(){
+        var objects = [];
+        for(var spawn of spawns){
             if(spawn.type == 'Player'){
-                CallEvent('Spawn', {
+                objects.push({
                     type:'Player', 
                     x:spawn.x, 
                     y:spawn.y,
@@ -20,7 +26,7 @@ class Spawns{
                 });
             }
             else if(spawn.type == 'Snake'){
-                CallEvent('Spawn', {
+                objects.push({
                     type:'Snake',
                     x:spawn.x,
                     y:spawn.y,
@@ -29,40 +35,31 @@ class Spawns{
                 });
             }
         }
+        return objects;
     }
 
-    EnumButton(data){
-        if(data.id == 0){
-            if(data.name == 'Player' || data.name == 'Snake'){
-                this.selected = true;
-                this.type = data.name;
-            }
-            else{
-                this.selected = false;
-            }
+    function Draw(){
+        for(var spawn of spawns){
+            ctx.beginPath();
+            ctx.arc(spawn.x - camx, spawn.y - camy, 7.5, 0, Math.PI*2);
+            ctx.fillStyle = GetColor(spawn.type);
+            ctx.fill();
         }
     }
 
-    MouseDown(e){
-        if(this.selected && !GetLayer('Play').play){
-            this.spawns.push({type:this.type, x:e.clientX+camx, y:e.clientY+camy});
-            used = true;
+    function Edit(){
+        if(e.type == 'mousedown' && !MouseOverToolbar()){
+            spawns.push({type:spawnType, x:e.clientX+camx, y:e.clientY+camy});
         }
     }
 
-    static GetColor(type){
-        if(type == 'Player') return 'red';
-        if(type == 'Snake') return 'yellow';
-    }
-
-    Draw(){
-        if(!GetLayer('Play').play){
-            for(var spawn of this.spawns){
-                ctx.beginPath();
-                ctx.arc(spawn.x - camx, spawn.y - camy, 7.5, 0, Math.PI*2);
-                ctx.fillStyle = Spawns.GetColor(spawn.type);
-                ctx.fill();
+    function OnGUI(){
+        for(var s of spawnTypes){
+            if(SelectableButton(s, spawnType==s)){
+                spawnType = s;
             }
         }
     }
+
+    return {name:'spawns', Edit, Draw, OnGUI, GetObjects}
 }

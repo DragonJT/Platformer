@@ -1,35 +1,31 @@
 
-class Tilemap{
-    constructor(tileSize){
-        this.tileSize = tileSize;
-        this.tiles = {};
-        this.type = 'Ground';
+function TileMap(){
+    var dragging = false;
+    var tileTypes = ['Ground', 'Empty'];
+    var tileType = 'Ground';
+    var tiles = {};
+    const tileSize = 50;
+
+    function SetTile(x,y,type){
+        tiles[x+'_'+y] = type;
     }
 
-    SetTile(x,y,color){
-        this.tiles[x+'_'+y] = color;
+    function GetTile(x,y){
+        return tiles[x+'_'+y];
     }
 
-    GetTile(x,y){
-        return this.tiles[x+'_'+y];
+    function SetTileWorldCoords(x,y,type){
+        SetTile(Math.floor(x/tileSize), Math.floor(y/tileSize), type);
     }
 
-    SetTileWorldCoords(x,y,color){
-        this.SetTile(Math.floor(x/this.tileSize), Math.floor(y/this.tileSize), color);
-    }
-
-    GetTileWorldCoords(x,y){
-        return this.GetTile(Math.floor(x/this.tileSize), Math.floor(y/this.tileSize));
-    }
-
-    WorldRectOverTile(rect, tile){
-        var minx = Math.floor((rect.x)/this.tileSize);
-        var miny = Math.floor((rect.y)/this.tileSize);
-        var maxx = Math.floor((rect.x + rect.w)/this.tileSize);
-        var maxy = Math.floor((rect.y + rect.h)/this.tileSize);
+    function WorldRectOverTile(rect, tile){
+        var minx = Math.floor((rect.x)/tileSize);
+        var miny = Math.floor((rect.y)/tileSize);
+        var maxx = Math.floor((rect.x + rect.w)/tileSize);
+        var maxy = Math.floor((rect.y + rect.h)/tileSize);
         for(var x=minx;x<=maxx;x++){
             for(var y=miny;y<=maxy;y++){
-                if(this.GetTile(x,y) == tile){
+                if(GetTile(x,y) == tile){
                     return true;
                 }
             }
@@ -37,8 +33,8 @@ class Tilemap{
         return false;
     }
 
-    TryMoveY(obj){
-        if(this.WorldRectOverTile(Play.GetObjRect(obj), 'Ground')){
+    function TryMoveY(obj){
+        if(WorldRectOverTile(GetObjRect(obj), 'Ground')){
             if(obj.velocityY >= 0){
                 obj.grounded = true;
             }
@@ -47,55 +43,54 @@ class Tilemap{
         }
     }
 
-    TryMoveX(obj){
-        if(this.WorldRectOverTile(Play.GetObjRect(obj), 'Ground')){
+    function TryMoveX(obj){
+        if(WorldRectOverTile(GetObjRect(obj), 'Ground')){
             obj.x -= obj.velocityX;
             obj.velocityX = 0;
         }
     }
 
-    EnumButton(data){
-        if(data.id == 0){
-            if(data.name == 'Ground' || data.name == 'Empty'){
-                this.type = data.name;
-                this.selected = true;
-            }
-            else{
-                this.selected = false;
-            }
-        }
-    }
-
-    MouseDown(e){
-        if(e.button == 0 && this.selected && !GetLayer('Play').play){
-            this.dragging = true;
-            this.SetTileWorldCoords(e.clientX+camx, e.clientY+camy, this.type);
-        }
-    }
-
-    MouseMove(e){
-        if(this.dragging){
-            this.SetTileWorldCoords(e.clientX+camx, e.clientY+camy, this.type);
-        }
-    }
-
-    MouseUp(e){
-        this.dragging = false;
-    }
-
-    Draw(){
-        var minx = Math.floor(camx/this.tileSize);
-        var miny = Math.floor(camy/this.tileSize);
-        var maxx = Math.floor((camx + ctx.canvas.width)/this.tileSize);
-        var maxy = Math.floor((camy + ctx.canvas.height)/this.tileSize);
+    function Draw(){
+        var minx = Math.floor(camx/tileSize);
+        var miny = Math.floor(camy/tileSize);
+        var maxx = Math.floor((camx + ctx.canvas.width)/tileSize);
+        var maxy = Math.floor((camy + ctx.canvas.height)/tileSize);
         for(var x=minx;x<=maxx;x++){
             for(var y=miny;y<=maxy;y++){
-                var type = this.GetTile(x,y);
+                var type = GetTile(x,y);
                 if(type == 'Ground'){
                     ctx.fillStyle = 'lime';
-                    ctx.fillRect(x*this.tileSize - camx, y*this.tileSize - camy, this.tileSize, this.tileSize);
+                    ctx.fillRect(x*tileSize - camx, y*tileSize - camy, tileSize, tileSize);
                 }
             }
         }
     }
+
+    function Edit(){
+        if(e.type == 'mousemove' && dragging){
+            if(!MouseOverToolbar()){
+                SetTileWorldCoords(e.clientX+camx, e.clientY+camy, tileType);
+            }
+        }
+        if(e.type == 'mousedown'){
+            if(e.button == 0){
+                if(!MouseOverToolbar()){
+                    SetTileWorldCoords(e.clientX+camx, e.clientY+camy, tileType);
+                    dragging = true;
+                }
+            }
+        }
+        if(e.type == 'mouseup'){
+            dragging = false;
+        }
+    }
+
+    function OnGUI(){
+        for(var t of tileTypes){
+            if(SelectableButton(t, tileType==t)){
+                tileType = t;
+            }
+        }
+    }
+    return {name:'tilemap', Edit, Draw, OnGUI, TryMoveX, TryMoveY};
 }

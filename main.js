@@ -14,81 +14,94 @@ function CreateCanvas(){
 }
 
 var ctx = CreateCanvas();
-var layers = [];
+var mousePos = {x:0, y:0};
 var keys = {};
-var used = false;
+var buttons = {};
+var e;
+var guiY = 0;
 var camx = 0;
 var camy = 0;
+var toolbarRect = {x:0, y:0, w:150, h:ctx.canvas.width};
 
-function CallEvent(name, value){
-    used = false;
-    for(var i=layers.length-1;i>=0;i--){
-        var l = layers[i];
-        if(l[name]){
-            l[name](value);
-        }
-        if(used){
-            return;
+function MouseOverToolbar(){
+    return RectContains(toolbarRect, mousePos);
+}
+
+function MainModeGUI(){
+    ctx.fillStyle = 'rgb(20,20,20)';
+    ctx.fillRect(toolbarRect.x, toolbarRect.y, toolbarRect.w, toolbarRect.h);
+    guiY = 0;
+
+    for(var m of modes){
+        if(SelectableButton(m.name, m == mode)){
+            if(mode.End){
+                mode.End();
+            }
+            mode = m;
+            if(mode.Start){
+                mode.Start();
+            }
         }
     }
 }
 
-function KeyDown(e){
+function OnEvent(){
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    mode.OnEvent();
+    MainModeGUI();
+    if(mode.OnGUI){
+        mode.OnGUI();
+    }
+}
+
+function MouseDown(evt){
+    e = evt;
+    buttons[e.button] = true;
+    OnEvent();
+}
+
+function MouseUp(evt){
+    e = evt;
+    buttons[e.button] = false;
+    OnEvent();
+}
+
+function KeyDown(evt){
+    e = evt;
     keys[e.key] = true;
-    CallEvent('KeyDown', e);
+    OnEvent();
 }
 
-function KeyUp(e){
+function KeyUp(evt){
+    e = evt;
     keys[e.key] = false;
-    CallEvent('KeyUp', e);
+    OnEvent();
 }
 
-function MouseDown(e){
-    CallEvent('MouseDown', e);
-}
-
-function MouseMove(e){
-    CallEvent('MouseMove', e);
-}
-
-function MouseUp(e){
-    CallEvent('MouseUp', e);
+function MouseMove(evt){
+    e = evt;
+    mousePos = {x:e.clientX, y:e.clientY};
+    OnEvent();
 }
 
 function Draw(){
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
-    used = false;
-    for(var l of layers){
-        if(l.Draw){
-            l.Draw();
-        }
-    }
+    e = {type:'draw'};
+    OnEvent();
     requestAnimationFrame(Draw);
-}
-
-function GetLayer(name){
-    for(var l of layers){
-        if(l.constructor.name == name){
-            return l;
-        }
-    }
-}
-
-function InitLayers(newLayers){
-    layers = newLayers;
-    for(var l of layers){
-        if(l.Awake){
-            l.Awake();
-        }
-    }
 }
 
 addEventListener('keydown', KeyDown);
 addEventListener('keyup', KeyUp);
 addEventListener('mousedown', MouseDown);
-addEventListener('mousemove', MouseMove);
 addEventListener('mouseup', MouseUp);
-Draw();
+addEventListener('mousemove', MouseMove);
 
-InitLayers([new Play(), new Editor(), new Tilemap(50), new Spawns(), new UI()]);
+var tilemap = TileMap();
+var spawns = Spawns();
+var play = Play();
+var editor = Editor();
+var vectorgraphics = VectorGraphics();
+var modes = [editor, play, vectorgraphics];
+var mode = editor;
+Draw();

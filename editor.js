@@ -1,23 +1,37 @@
 
-class Editor{
-    constructor(){
-        this.editorSpeed = 10;
-    }
-
-    Draw(){
-        if(!GetLayer('Play').play){
-            if(keys.ArrowLeft){
-                camx -= this.editorSpeed;
-            }
-            if(keys.ArrowRight){
-                camx += this.editorSpeed;
-            }
-            if(keys.ArrowUp){
-                camy -= this.editorSpeed;
-            }
-            if(keys.ArrowDown){
-                camy += this.editorSpeed;
-            }
+function Editor(){
+    const editorSpeed = 10;
+    var modes = [tilemap, spawns]
+    var mode = tilemap;
+    
+    function OnEvent(){
+        if(keys.ArrowLeft){
+            camx -= editorSpeed;
+        }
+        if(keys.ArrowRight){
+            camx += editorSpeed;
+        }
+        if(keys.ArrowUp){
+            camy -= editorSpeed;
+        }
+        if(keys.ArrowDown){
+            camy += editorSpeed;
+        }
+        mode.Edit();
+        for(var m of modes){
+            m.Draw();
         }
     }
+
+    function OnGUI(){
+        guiY += 10;
+        for(var m of modes){
+            if(SelectableButton(m.name, mode == m)){
+                mode = m;
+            }
+        }
+        guiY+=10;
+        mode.OnGUI();
+    }
+    return {name:'editor', OnEvent, OnGUI};
 }
