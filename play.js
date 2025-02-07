@@ -36,8 +36,8 @@ function Play(){
 
     function DrawObj(obj){
         if(obj.type == 'Player'){
-            camx = obj.x - ctx.canvas.width/2;
-            camy = obj.y - ctx.canvas.height/2;
+            camx = obj.x - gfx.GetCanvasWidth()/2;
+            camy = obj.y - gfx.GetCanvasHeight()/2;
             obj.velocityY += gravity;
             obj.velocityX = 0;
             if(keys.ArrowLeft){
@@ -56,13 +56,11 @@ function Play(){
             obj.x += obj.velocityX;
             TryMove(obj);
             tilemap.TryMoveX(obj);
-            ctx.fillStyle = 'red';
-            ctx.fillRect(obj.x - obj.rx - camx, obj.y - obj.ry - camy, obj.rx*2, obj.ry*2);
+            gfx.DrawRect(obj.x - obj.rx - camx, obj.y - obj.ry - camy, obj.rx*2, obj.ry*2, [1,0,0,1]);
         }
         else if(obj.type == 'Snake'){
-            ctx.fillStyle = 'yellow';
             obj.height = (Math.sin(snakeTime + (obj.x + obj.y) * 0.025) + 1) / 2 * obj.maxHeight;
-            ctx.fillRect(obj.x - obj.rx - camx, obj.y - obj.height - camy, obj.rx*2, obj.height);
+            gfx.DrawRect(obj.x - obj.rx - camx, obj.y - obj.height - camy, obj.rx*2, obj.height, [1,1,0,1]);
         }
     }
 
@@ -81,5 +79,5 @@ function Play(){
         objects = undefined;
     }
 
-    return {name:'play',OnEvent, Start, End}
+    return {name:'play', OnEvent, Start, End}
 }

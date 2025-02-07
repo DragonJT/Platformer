@@ -53,14 +53,13 @@ function TileMap(){
     function Draw(){
         var minx = Math.floor(camx/tileSize);
         var miny = Math.floor(camy/tileSize);
-        var maxx = Math.floor((camx + ctx.canvas.width)/tileSize);
-        var maxy = Math.floor((camy + ctx.canvas.height)/tileSize);
+        var maxx = Math.floor((camx + gfx.GetCanvasWidth())/tileSize);
+        var maxy = Math.floor((camy + gfx.GetCanvasHeight())/tileSize);
         for(var x=minx;x<=maxx;x++){
             for(var y=miny;y<=maxy;y++){
                 var type = GetTile(x,y);
                 if(type == 'Ground'){
-                    ctx.fillStyle = 'lime';
-                    ctx.fillRect(x*tileSize - camx, y*tileSize - camy, tileSize, tileSize);
+                    gfx.DrawRect(x*tileSize - camx, y*tileSize - camy, tileSize, tileSize, [0,1,0,1]);
                 }
             }
         }

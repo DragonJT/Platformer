@@ -3,10 +3,11 @@ function Spawns(){
     var spawnType = 'Player';
     var spawnTypes = ['Player', 'Snake'];
     var spawns = [];
+    const spawnRadius = 10;
 
     function GetColor(type){
-        if(type == 'Player') return 'red';
-        if(type == 'Snake') return 'yellow';
+        if(type == 'Player') return [1,0,0,1];
+        if(type == 'Snake') return [1,1,0,1];
     }
 
     function GetObjects(){
@@ -40,10 +41,8 @@ function Spawns(){
 
     function Draw(){
         for(var spawn of spawns){
-            ctx.beginPath();
-            ctx.arc(spawn.x - camx, spawn.y - camy, 7.5, 0, Math.PI*2);
-            ctx.fillStyle = GetColor(spawn.type);
-            ctx.fill();
+            gfx.DrawRect(spawn.x - spawnRadius - camx, spawn.y - spawnRadius - camy, spawnRadius*2, spawnRadius*2, GetColor(spawn.type));
+            gfx.DrawRectBorder(spawn.x - spawnRadius - camx, spawn.y - spawnRadius - camy, spawnRadius*2, spawnRadius*2, 2, [1,1,1,1]);
         }
     }
 

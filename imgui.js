@@ -3,46 +3,40 @@ function RectContains(rect, point){
 }
 
 function Button(text){
-    var rect = {x:0, y:guiY, w:150, h:20};
-    guiY += 25;
+    var rect = {x:0, y:guiY, w:150, h:25};
+    guiY += 30;
     var contains = RectContains(rect, mousePos);
     if(contains && e.type == 'mousedown' && e.button == 0){
         return true;
     }
     if(e.type == 'draw'){
         var mousedown = buttons[0];
-        ctx.fillStyle =  contains ? (mousedown ? 'lime': 'magenta') : 'blue';
-        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-        ctx.strokeStyle = 'white';
-        ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-        ctx.fillStyle = 'white';
-        ctx.font = '18px Arial';
-        ctx.fillText(text, rect.x+10, rect.y+18);
+        var tint = contains ? (mousedown ? [0,1,0,1]: [1,0,1,1]) : [0,0,1,1];
+        gfx.DrawRect(rect.x, rect.y, rect.w, rect.h, tint);
+        gfx.DrawRectBorder(rect.x, rect.y, rect.w, rect.h, 2, [1,1,1,1]);
+        gfx.DrawText(rect.x, rect.y, rect.w, rect.h, text, 18, [1,1,1,1]);
     }
     return false;
 }
 
 function SelectableButton(text, selected){
-    var rect = {x:0, y:guiY, w:150, h:20};
-    guiY += 25;
+    var rect = {x:0, y:guiY, w:150, h:25};
+    guiY += 30;
     var contains = RectContains(rect, mousePos);
     if(contains && e.type == 'mousedown' && e.button == 0){
         return true;
     }
     if(e.type == 'draw'){
-        ctx.fillStyle = 'blue';
+        var tint = [0,0,1,1];
         if(contains){
-            ctx.fillStyle = 'magenta';
+            tint = [1,0,1,1];
         }
         if(selected){
-            ctx.fillStyle = 'lime';
+            tint = [0,1,0,1];
         }
-        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-        ctx.strokeStyle = 'white';
-        ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-        ctx.fillStyle = 'white';
-        ctx.font = '18px Arial';
-        ctx.fillText(text, rect.x+10, rect.y+18);
+        gfx.DrawRect(rect.x, rect.y, rect.w, rect.h, tint);
+        gfx.DrawRectBorder(rect.x, rect.y, rect.w, rect.h, 2, [1,1,1,1]);
+        gfx.DrawText(rect.x, rect.y, rect.w, rect.h, text, 18, [1,1,1,1]);
     }
     return false;
 }

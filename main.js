@@ -1,19 +1,7 @@
 
-function CreateCanvas(){
-    var canvas = document.createElement('canvas');
-    document.body.appendChild(canvas);
-    document.body.style.margin = '0px';
-    document.body.style.overflow = 'hidden';
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    addEventListener('resize', ()=>{
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-    return canvas.getContext('2d');
-}
 
-var ctx = CreateCanvas();
+var gfx = Graphics();
+
 var mousePos = {x:0, y:0};
 var keys = {};
 var buttons = {};
@@ -21,15 +9,13 @@ var e;
 var guiY = 0;
 var camx = 0;
 var camy = 0;
-var toolbarRect = {x:0, y:0, w:150, h:ctx.canvas.width};
 
 function MouseOverToolbar(){
-    return RectContains(toolbarRect, mousePos);
+    return RectContains( {x:0, y:0, w:150, h:gfx.GetCanvasHeight()}, mousePos);
 }
 
 function MainModeGUI(){
-    ctx.fillStyle = 'rgb(20,20,20)';
-    ctx.fillRect(toolbarRect.x, toolbarRect.y, toolbarRect.w, toolbarRect.h);
+    gfx.DrawRect(0, 0, 150, gfx.GetCanvasHeight(), [0.1,0.1,0.1,1])
     guiY = 0;
 
     for(var m of modes){
@@ -46,8 +32,7 @@ function MainModeGUI(){
 }
 
 function OnEvent(){
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    gfx.Clear();
     mode.OnEvent();
     MainModeGUI();
     if(mode.OnGUI){
@@ -101,7 +86,7 @@ var tilemap = TileMap();
 var spawns = Spawns();
 var play = Play();
 var editor = Editor();
-var vectorgraphics = VectorGraphics();
-var modes = [editor, play, vectorgraphics];
+var paint = Paint();
+var modes = [editor, play, paint];
 var mode = editor;
 Draw();
