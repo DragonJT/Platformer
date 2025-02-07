@@ -6,6 +6,7 @@ var mousePos = {x:0, y:0};
 var keys = {};
 var buttons = {};
 var e;
+var guiX = 0;
 var guiY = 0;
 var camx = 0;
 var camy = 0;

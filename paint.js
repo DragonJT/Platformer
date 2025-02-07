@@ -11,7 +11,10 @@ function Paint(){
     var pixels = Array(width*height*columns).fill(0);
     var texture = gfx.CreateTexture(pixels, width, height);
     var dragging = false;
-    var color = [0,0,0,0];
+    var colors = [
+        [0,0,0,0], [1,0,0,1], [1,1,1,1], [0,0,1,1], [0,1,1,1], 
+        [1,0,1,1], [1,1,0,1], [1,0.5,0,1], [0,0,0,1], [0,1,0,1]];
+    var color = colors[0];
 
     function GetPlayerTexture(){
         return texture;
@@ -58,27 +61,16 @@ function Paint(){
 
     function OnGUI(){
         guiY+=10;
-        if(Button('eraser')){
-            color = [0,0,0,0];
-        }
-        if(Button('white')){
-            color = [1,1,1,1];
-        }
-        if(Button('red')){
-            color = [1,0,0,1];
-        }
-        if(Button('green')){
-            color = [0,1,0,1];
-        }
-        if(Button('blue')){
-            color = [0,0,1,1];
-        }
+        color = ColorPallette(colors, color);
         guiY+=10;
         if(Button('1')){
             brushRadius = 1;
         }
         if(Button('2')){
             brushRadius = 2;
+        }
+        if(Button('4')){
+            brushRadius = 4;
         }
     }
 

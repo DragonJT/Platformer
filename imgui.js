@@ -40,3 +40,38 @@ function SelectableButton(text, selected){
     }
     return false;
 }
+
+function ColorButton(x, y, color, selected){
+    var rect = {x, y, w:30, h:30};
+    var contains = RectContains(rect, mousePos);
+    if(contains && e.type == 'mousedown' && e.button == 0){
+        return true;
+    }
+    if(e.type == 'draw'){
+        gfx.DrawRect(rect.x, rect.y, rect.w, rect.h, color);
+        var color = selected ? [1,0,1,1] : [1,1,1,1];
+        gfx.DrawRectBorder(rect.x, rect.y, rect.w, rect.h, 2, color);
+    }
+    return false;
+}
+
+function ColorPallette(colors, color){
+    var x = 0;
+    for(var c of colors){
+        if(ColorButton(x, guiY, c, color == c)){
+            color = c;
+        }
+        x+=30;
+        if(x>=150){
+            x=0;
+            guiY+=30;
+        }
+    }
+    guiY += 30;
+    return color;
+}
+
+function NewLine(){
+    guiX = 0;
+    guiY += 30;
+}
