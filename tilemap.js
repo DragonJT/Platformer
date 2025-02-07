@@ -59,7 +59,7 @@ function TileMap(){
             for(var y=miny;y<=maxy;y++){
                 var type = GetTile(x,y);
                 if(type == 'Ground'){
-                    gfx.DrawRect(x*tileSize - camx, y*tileSize - camy, tileSize, tileSize, [0,1,0,1]);
+                    gfx.DrawTexture(x*tileSize - camx, y*tileSize - camy, tileSize, tileSize, paint.GetGroundTileTexture(), [1,1,1,1]);
                 }
             }
         }
